@@ -137,7 +137,7 @@ Amazon CloudWatch provides the central telemetry collection and storage layer. T
 
 Grafana uses CloudWatch as a data source to visualise metrics and evaluate alert rules.
 
-### Monitoring screenshots
+### Monitoring screenshot
 
 ![CloudWatch and Grafana monitoring overview](screenshots/Screenshot%202026-10-12%20at%2017.22.34.png)
 
