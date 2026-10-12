@@ -143,6 +143,25 @@ An alert indicates that a defined condition has been met; it does not necessaril
 
 ![image alt](https://github.com/imed3721/mon-and-obs/blob/0be606e6d7354ea226a6e249854db01fc86ee284/screenshots/Screenshot%202026-10-12%20at%2017.58.39.png)
 
+## Controlled testing / Test CPU alert 
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.20.16.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.22.15.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.23.18.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.23.31.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.25.08.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.38.40.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.39.55.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.41.30.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.41.37.png)
 
 ## 7. Deployment Strategy
 
