@@ -78,7 +78,7 @@ jobs:
             --parameters "commands=[
               \"set -e\",
               \"echo '$CONTENT' | base64 -d | sudo tee /usr/share/nginx/html/index.html > /dev/null\",
-              \"sudo nginx -t\",
+              \"sudo nginx -t --bad-option",
               \"sudo systemctl reload nginx\",
               \"echo 'Website deployment completed successfully.'\"
             ]" \
