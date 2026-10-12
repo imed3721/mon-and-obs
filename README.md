@@ -143,7 +143,7 @@ An alert indicates that a defined condition has been met; it does not necessaril
 
 ![image alt](https://github.com/imed3721/mon-and-obs/blob/0be606e6d7354ea226a6e249854db01fc86ee284/screenshots/Screenshot%202026-10-12%20at%2017.58.39.png)
 
-## Controlled testing / Test CPU alert 
+#### Controlled testing / Test CPU alert 
 
 ![image alt](https://github.com/imed3721/mon-and-obs/blob/dc60e469f6d66bf46fde64e16593a48c476680e2/screenshots/Screenshot%202026-10-12%20at%2018.20.16.png)
 
@@ -184,35 +184,41 @@ This approach avoids requiring SSH access from GitHub Actions to deploy the webs
 
 The current workflow verifies the remote command result. A further improvement would be to add an HTTP smoke test to confirm that the updated website is actually being served to clients.
 
+#### Automated CI/CD deployment verification test
+
+Description: Tests the automated CI/CD deployment pipeline by updating the `index.html` heading to include “v2” and verifying that GitHub Actions deploys the change to the EC2 instance.
+
+**Expected outcome:** The GitHub Actions workflow completes successfully, and the website displays the updated heading with “v2,” confirming that the deployment process works as expected.
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d1e3dcb93a7a92969d8841463852cd69217fda3b/screenshots/Screenshot%202026-10-12%20at%2019.04.49.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d1e3dcb93a7a92969d8841463852cd69217fda3b/screenshots/Screenshot%202026-10-12%20at%2019.04.52.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d1e3dcb93a7a92969d8841463852cd69217fda3b/screenshots/Screenshot%202026-10-12%20at%2019.05.00.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d1e3dcb93a7a92969d8841463852cd69217fda3b/screenshots/Screenshot%202026-10-12%20at%2019.05.08.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d1e3dcb93a7a92969d8841463852cd69217fda3b/screenshots/Screenshot%202026-10-12%20at%2019.05.13.png)
+
 ## 8. Failure Testing
 
 Failure testing checks whether the deployment workflow detects errors, stops unsafe deployments, and provides useful diagnostic information.
 
-### Validation failure
+#### Nginx configuration validation failure test
 
-Temporarily remove the expected title text from `index.html` and commit the change.
+Description: Introduces an invalid option to the nginx -t command during deployment to test whether the pipeline detects the validation error and handles the deployment failure correctly.
 
-**Expected result:** The validation step fails before a deployment command is sent to EC2.
+**Expected outcome:** Nginx validation fails, the deployment workflow reports an error, and the pipeline stops before completing the Nginx reload and reporting a successful deployment.
 
-### Remote deployment failure
+![image alt](https://github.com/imed3721/mon-and-obs/blob/4d459cdc01493e3cf561e4c0d6b3d20da86ec951/screenshots/Screenshot%202026-10-12%20at%2019.13.18.png)
 
-In a controlled test, insert a deliberate failing shell command into the remote SSM command sequence.
+![image alt](https://github.com/imed3721/mon-and-obs/blob/4d459cdc01493e3cf561e4c0d6b3d20da86ec951/screenshots/Screenshot%202026-10-12%20at%2019.13.23.png)
 
-**Expected result:** The remote command fails, the workflow exits unsuccessfully, and available SSM error details are logged.
+![image alt](https://github.com/imed3721/mon-and-obs/blob/4d459cdc01493e3cf561e4c0d6b3d20da86ec951/screenshots/Screenshot%202026-10-12%20at%2019.13.27.png)
 
-### Recovery test
+![image alt](https://github.com/imed3721/mon-and-obs/blob/4d459cdc01493e3cf561e4c0d6b3d20da86ec951/screenshots/Screenshot%202026-10-12%20at%2019.13.31.png)
 
-Remove the deliberate failure and restore the valid deployment configuration.
-
-**Expected result:** The subsequent deployment completes successfully and the website is updated.
-
-### IAM permission failure
-
-An incorrectly configured IAM policy may prevent the workflow from submitting the SSM command.
-
-**Expected result:** The workflow reports an AWS authorization error, allowing the missing or restricted permission to be investigated.
-
-Failure tests should be performed deliberately, with each test's expected outcome compared against the actual result. Tests should not be described as successful until the corresponding outcome has been observed.
+![image alt](https://github.com/imed3721/mon-and-obs/blob/4d459cdc01493e3cf561e4c0d6b3d20da86ec951/screenshots/Screenshot%202026-10-12%20at%2019.13.34.png)
 
 ## 9. Security Considerations
 
