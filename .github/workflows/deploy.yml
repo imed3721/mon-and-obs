@@ -4,55 +4,72 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: observability-demo-deployment
+  cancel-in-progress: false
 
 jobs:
   deploy:
     name: Deploy Website to EC2
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Validate website
+      - name: Validate deployment configuration
         shell: bash
         run: |
           set -euo pipefail
 
+          : "${AWS_REGION:?GitHub secret AWS_REGION is missing}"
+          : "${EC2_INSTANCE_ID:?GitHub secret EC2_INSTANCE_ID is missing}"
+
           test -f index.html
           grep -q "AWS Observability Platform" index.html
 
-          echo "Website validation passed."
+          echo "Website and deployment configuration validated."
 
       - name: Encode website
         shell: bash
         run: |
           set -euo pipefail
 
-          base64 -w 0 index.html > index.html.b64
+          base64 -w 0 index.html > "$RUNNER_TEMP/index.html.b64"
+          echo "Website encoded successfully."
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Deploy to EC2 using Systems Manager
+      - name: Verify AWS identity
         shell: bash
         run: |
           set -euo pipefail
 
-          CONTENT=$(cat index.html.b64)
+          aws sts get-caller-identity
+          echo "AWS credentials verified."
+
+      - name: Deploy to EC2 using Systems Manager
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CONTENT=$(cat "$RUNNER_TEMP/index.html.b64")
 
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "$EC2_INSTANCE_ID" \
@@ -62,21 +79,48 @@ jobs:
               \"set -e\",
               \"echo '$CONTENT' | base64 -d | sudo tee /usr/share/nginx/html/index.html > /dev/null\",
               \"sudo nginx -t\",
-              \"sudo systemctl reload nginx\"
+              \"sudo systemctl reload nginx\",
+              \"echo 'Website deployment completed successfully.'\"
             ]" \
             --query "Command.CommandId" \
             --output text)
 
+          if [[ -z "$COMMAND_ID" || "$COMMAND_ID" == "None" ]]; then
+            echo "ERROR: AWS Systems Manager did not return a command ID."
+            exit 1
+          fi
+
+          echo "command_id=$COMMAND_ID" >> "$GITHUB_OUTPUT"
           echo "SSM Command ID: $COMMAND_ID"
 
-          aws ssm wait command-executed \
+          if ! aws ssm wait command-executed \
             --command-id "$COMMAND_ID" \
-            --instance-id "$EC2_INSTANCE_ID"
+            --instance-id "$EC2_INSTANCE_ID"; then
 
-      - name: Verify deployment
+            echo "ERROR: Deployment command did not complete successfully."
+
+            aws ssm get-command-invocation \
+              --command-id "$COMMAND_ID" \
+              --instance-id "$EC2_INSTANCE_ID" \
+              --query '{Status:Status,StatusDetails:StatusDetails,StandardErrorContent:StandardErrorContent,StandardOutputContent:StandardOutputContent}' \
+              --output json || true
+
+            exit 1
+          fi
+
+      - name: Verify deployment result
+        if: always() && steps.deploy.outputs.command_id != ''
         shell: bash
+        env:
+          COMMAND_ID: ${{ steps.deploy.outputs.command_id }}
         run: |
           set -euo pipefail
+
+          aws ssm get-command-invocation \
+            --command-id "$COMMAND_ID" \
+            --instance-id "$EC2_INSTANCE_ID" \
+            --query '{Status:Status,StatusDetails:StatusDetails,ResponseCode:ResponseCode,StandardOutputContent:StandardOutputContent,StandardErrorContent:StandardErrorContent}' \
+            --output json
 
           STATUS=$(aws ssm get-command-invocation \
             --command-id "$COMMAND_ID" \
@@ -84,7 +128,13 @@ jobs:
             --query "Status" \
             --output text)
 
-          echo "Deployment status: $STATUS"
+          echo "Final deployment status: $STATUS"
           test "$STATUS" = "Success"
 
+      - name: Deployment summary
+        if: success()
+        shell: bash
+        run: |
           echo "Deployment completed successfully."
+          echo "Region: $AWS_REGION"
+          echo "EC2 instance: $EC2_INSTANCE_ID"
