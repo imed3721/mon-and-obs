@@ -80,6 +80,9 @@ Amazon CloudWatch is the central telemetry collection and storage service. The C
 
 Grafana uses CloudWatch as a data source to visualize metrics and evaluate alert rules.
 
+![image alt](https://github.com/imed3721/mon-and-obs/blob/1f85f48f556d41e1bf8d674a9c7bf2ccb15ea8b3/screenshots/Screenshot%202026-10-12%20at%2017.22.34.png)
+
+
 ### Monitored signals
 
 | Signal | Source | Purpose |
@@ -115,6 +118,31 @@ The configured SNS contact point is `AWS SNS Alerts`.
 Alert thresholds are starting values rather than universal indicators of failure. They should be tuned to the workload and validated through controlled testing.
 
 An alert indicates that a defined condition has been met; it does not necessarily mean the service is unavailable. Notification delivery should be tested independently to confirm that alerts reach the intended recipients.
+
+### High CPU 
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.40.51.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.40.57.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.47.51.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.49.01.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.49.07.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/d9ac95dc06868aeb4556a6d0243fdfa2c6ccdc1c/screenshots/Screenshot%202026-10-12%20at%2017.49.13.png)
+
+### High Memory
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/121cc2b7c8c0176431df2378a74e4dabb6b6aa2b/screenshots/Screenshot%202026-10-12%20at%2017.54.29.png)
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/121cc2b7c8c0176431df2378a74e4dabb6b6aa2b/screenshots/Screenshot%202026-10-12%20at%2017.54.39.png)
+
+### High Disk Utilization 
+
+![image alt](https://github.com/imed3721/mon-and-obs/blob/0be606e6d7354ea226a6e249854db01fc86ee284/screenshots/Screenshot%202026-10-12%20at%2017.58.39.png)
+
 
 ## 7. Deployment Strategy
 
